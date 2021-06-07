@@ -9,11 +9,7 @@
     <title>Index</title>
 </head>
 <body>
-  <header>
-    <h1>シンプルメモ</h1>
-    <a href="/"><h2 class="top">Top画面へ</h2></a>
-    <a href="/new"><h2 class="post">投稿画面</h2></a>
-  </header>
+  <%- include('header') %>
   <main>
     <div class="content">
       <% items.forEach((item) => { %>

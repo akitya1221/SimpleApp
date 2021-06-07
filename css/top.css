@@ -1,0 +1,28 @@
+body {
+  background-color: #cef9ff;
+}
+
+header h1 {
+  font-size: 30px;
+  padding: 20px;
+  text-align: center;
+}
+
+.box {
+  text-align: center;
+}
+
+.box h2 {
+  color: red;
+  font-size: 30px;
+  margin: 30px;
+}
+
+.box p {
+  margin-bottom: 50px;
+}
+
+.box a {
+  font-size: 25px;
+}
+/*# sourceMappingURL=top.css.map */

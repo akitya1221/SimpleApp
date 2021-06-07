@@ -2,6 +2,16 @@ const { response } = require('express');
 const express = require('express');
 const mysql = require('mysql');
 const app = express();
+const session = require('express-session');
+
+// セッション設定
+app.use(
+    session({
+        secret: 'my_secret_key',
+        resave: 'false',
+        saveUninitialized: false,
+    })
+)
 
 
 // mysqlログイン情報ーーーーーーーーーーーーーーーーーーーーーーーーー
@@ -27,8 +37,75 @@ app.set('views', './views');
 app.set('view engine', 'ejs');
 
 app.get('/', (req, res) => {
-    res.render('top.ejs')
+    res.render('top.ejs');
 });
+
+// ログイン機能ここから(開発途中)
+app.get('/login', (req, res) => {
+    res.render('login.ejs');
+});
+
+app.post('/login', (req, res) => {
+
+    const username = req.body.username;
+
+    connection.query(
+        'SELECT * FROM users WHERE username = ?',
+        [username],
+        (error, result) => {
+            if (result.length > 0) {
+                if (req.body.password === result[0].password){
+                    req.session.userId = result[0].id;
+                    req.session.username = result[0].username;
+                    res.redirect('/index');
+                  } else {
+                    res.redirect('/login');
+                  }
+            } else {
+                res.redirect('/login');
+            }
+        }
+    );
+});
+
+app.use((req, res, next) => {
+    if (req.session.userId === undefined) {
+        res.locals.username = 'ゲスト';
+        res.locals.isLoggedIn = false;
+    } else {
+        res.locals.username = req.session.username;
+        res.locals.isLoggedIn = true;
+    }
+    next();
+});
+
+app.get('/logout', (req, res) => {
+    req.session.destroy(error => {
+      res.redirect('/index');
+    });
+});
+  // ここまで------------------------------------
+
+// 新規登録機能
+app.get('/signup', (req, res) => {
+    res.render('signup.ejs');
+});
+
+app.post('/signup', (req, res) => {
+
+    const username = req.body.username;
+    const password = req.body.password;  
+
+    connection.query(
+        'INSERT INTO users (username, password) VALUES (?, ?)',
+        [username, password],
+        (error, results) => {
+          res.redirect('/index');
+        }
+      );
+    
+});
+
 
 app.get('/index', (req, res) => {
     connection.query(
